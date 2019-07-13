@@ -1,30 +1,30 @@
 {
-    "name": "marcha/erpmonster-laravel-toolbox",
-    "description": "Repository, Service, Filters...",
-    "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "~5.0"
-    },
-    "require-dev": {
-        "phpspec/phpspec": "~5.1"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Nikola Marčič",
-            "email": "nikola@marcic.net"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Erpmonster\\": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Erpmonster\\System\\RouteServiceProvider"
-            ]
-        }
+  "name": "erpmonster/laravel-toolbox",
+  "description": "Repository, Service, Filters...",
+  "require": {
+    "php": ">=5.4.0",
+    "illuminate/support": "~5.0"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "~5.1"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nikola Marčič",
+      "email": "nikola@marcic.net"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Erpmonster\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Erpmonster\\System\\RouteServiceProvider"
+      ]
+    }
+  }
 }
