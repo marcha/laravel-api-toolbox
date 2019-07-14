@@ -16,7 +16,19 @@ class RouteServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . '/../config/erpmonster.php' => config_path('erpmonster.php'),
+        ], 'config');
+
         parent::boot();
+    }
+
+    public function register()
+    {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/erpmonster.php',
+            'erpmonster'
+        );
     }
 
     /**
@@ -60,15 +72,14 @@ class RouteServiceProvider extends ServiceProvider
 
                     $router->group([
                         // TODO: Resolve domains
-                        'domain' => env('API_URL',''),
+                        'domain' => env('API_URL', ''),
                         'middleware' => $protected ? $middleware : [],
                         'namespace'  => $namespace,
-                       // TODO: Resolve prefixes ..maybe in config...
-                       // 'prefix' => 'api/v1/'
+                        // TODO: Resolve prefixes ..maybe in config...
+                        // 'prefix' => 'api/v1/'
                     ], function ($router) use ($path) {
 
                         require $path;
-
                     });
                 }
             }
