@@ -16,20 +16,14 @@ class RouteServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../../config/erpmonster.php' => config_path('erpmonster.php'),
-        ], 'config');
+        $path = realpath(__DIR__ . '/../../config/erpmonster.php');
 
+        $this->publishes([$path => config_path('erpmonster.php')], 'config');
+        $this->mergeConfigFrom($path, 'erpmonster');
         parent::boot();
     }
 
-    public function register()
-    {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/erpmonster.php',
-            'erpmonster'
-        );
-    }
+
 
     /**
      * Define the routes for the application.
