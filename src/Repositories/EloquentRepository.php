@@ -101,6 +101,21 @@ abstract class EloquentRepository
     }
 
     /**
+     * Get all distinct resources ordered by recentness
+     * @param  array $columns
+     * @param  array $options
+     * @return Collection
+     */
+    public function getRecentDistinct($columns, array $options = [])
+    {
+        $query = $this->createBaseBuilder($options);
+
+        $query->select($columns)->orderBy($this->getCreatedAtColumn(), 'DESC');
+
+        return $query->distinct()->get();
+    }
+
+    /**
      * Get all resources by a where clause ordered by recentness
      * @param  string $column
      * @param  mixed $value
@@ -353,7 +368,7 @@ abstract class EloquentRepository
      * @param array $data
      * @return mixed
      */
-    public function updateOrCreate(Array $keys, Array $data)
+    public function updateOrCreate(array $keys, array $data)
     {
         $model = $this->getModel();
         return $model->updateOrCreate($keys, $data);

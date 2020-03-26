@@ -16,7 +16,7 @@ class RouteServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $path = realpath(__DIR__ . '/../../config/erpmonster.php');
+        $path = realpath(__DIR__ . '/../config/erpmonster.php');
 
         $this->publishes([$path => config_path('erpmonster.php')], 'config');
         $this->mergeConfigFrom($path, 'erpmonster');
@@ -34,6 +34,8 @@ class RouteServiceProvider extends ServiceProvider
     public function map(Router $router)
     {
         $config = config('erpmonster');
+        $domain = env('API_URL', '');
+        $prefix = $config['api_uri_prefix'];
 
         $middleware = $config['protection_middleware'];
 
@@ -65,12 +67,10 @@ class RouteServiceProvider extends ServiceProvider
                     }
 
                     $router->group([
-                        // TODO: Resolve domains
-                        'domain' => env('API_URL', ''),
+                        'domain' => $domain,
                         'middleware' => $protected ? $middleware : [],
                         'namespace'  => $namespace,
-                        // TODO: Resolve prefixes ..maybe in config...
-                        // 'prefix' => 'api/v1/'
+                        'prefix' => $prefix
                     ], function ($router) use ($path) {
 
                         require $path;
