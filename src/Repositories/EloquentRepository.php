@@ -106,7 +106,7 @@ abstract class EloquentRepository
      * @param  array $options
      * @return Collection
      */
-    public function getRecentDistinct($columns, array $options = [])
+    public function getRecentDistinct(array $columns = ['*'], array $options = [])
     {
         $query = $this->createBaseBuilder($options);
 
