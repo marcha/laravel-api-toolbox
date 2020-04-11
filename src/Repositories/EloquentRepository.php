@@ -261,7 +261,7 @@ abstract class EloquentRepository
     }
 
     /**
-     * Creates a new query builder with Optimus options set
+     * Creates a new query builder with options set
      * @param  array $options
      * @return Builder
      */
@@ -389,5 +389,21 @@ abstract class EloquentRepository
                 $query->where($key, $value);
             }
         }
+    }
+
+    /**
+     * Get resources count by a where clause
+     * @param  string $column
+     * @param  mixed $value
+     * @param  array  $options
+     * @return Model|object
+     */
+    public function count(array $options = [])
+    {
+        $query = $this->createQueryBuilder();
+
+        $this->applyResourceOptions($query, $options);
+
+        return $query->count();
     }
 }
