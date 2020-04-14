@@ -419,4 +419,19 @@ abstract class EloquentRepository
         $query->where('log_row_id', $value);
         return $query->first();
     }
+
+    /**
+     * Update resources by logRowId
+     * @param  string $logRowId
+     * @param mixed $syncModel
+     * @return Model|object
+     */
+    public function updateByLogRowId($logRowId, $syncModel)
+    {
+        $model = $this->getByLogRowId($logRowId);
+        if ($model) {
+            $model->fill($syncModel);
+            $model->save();
+        }
+    }
 }
