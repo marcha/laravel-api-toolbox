@@ -406,4 +406,17 @@ abstract class EloquentRepository
 
         return $query->count();
     }
+
+
+    /**
+     * Get resources by logRowId
+     * @param  string $value
+     * @return Model|object
+     */
+    public function getByLogRowId($value)
+    {
+        $query = $this->createBaseBuilder();
+        $query->where('log_row_id', $value);
+        return $query->first();
+    }
 }
