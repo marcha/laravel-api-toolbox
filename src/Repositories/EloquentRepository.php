@@ -422,13 +422,12 @@ abstract class EloquentRepository
 
     /**
      * Update resources by logRowId
-     * @param  string $logRowId
      * @param mixed $syncModel
      * @return Model|object
      */
-    public function updateByLogRowId($logRowId, $syncModel)
+    public function updateSync($syncModel)
     {
-        $model = $this->getByLogRowId($logRowId);
+        $model = $this->getByLogRowId($syncModel->log_row_id);
         if ($model) {
             $model->fill($syncModel);
             $model->save();
