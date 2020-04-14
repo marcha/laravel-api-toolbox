@@ -432,5 +432,6 @@ abstract class EloquentRepository
             $model->fill($syncModel);
             $model->save();
         }
+        return $model;
     }
 }
