@@ -421,17 +421,38 @@ abstract class EloquentRepository
     }
 
     /**
-     * Update resources by logRowId
+     * Update resources by logRowId (sync)
      * @param mixed $syncModel
      * @return Model|object
      */
     public function updateSync($syncModel)
     {
         $model = $this->getByLogRowId($syncModel->log_row_id);
+        $data = $syncModel->toArray();
         if ($model) {
-            $model->fill($syncModel);
+            $model->fill($data);
             $model->save();
         }
         return $model;
+    }
+
+    /**
+     * Create resources by sync
+     * @param mixed $syncModel
+     * @return Model|object
+     */
+    public function createSync($syncModel)
+    {
+        $data = $syncModel->toArray();
+        return $this->create($data);
+    }
+
+    /**
+     * Delete resources by sync
+     * @param mixed $syncModel
+     */
+    public function deleteSync($syncModel)
+    {
+        $this->deleteWhere('log_row_id', $syncModel->log_row_id);
     }
 }
