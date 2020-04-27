@@ -444,8 +444,14 @@ abstract class EloquentRepository
     public function createSync($syncModel)
     {
         $data = $syncModel->toArray();
-        $this->getModel();
-        return $this->create($data);
+
+        $model = $this->getModel();
+
+        $model->fill($data);
+
+        $model->save();
+
+        return $model;
     }
 
     /**
