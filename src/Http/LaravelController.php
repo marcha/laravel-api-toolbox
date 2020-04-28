@@ -31,15 +31,16 @@ abstract class LaravelController extends Controller
      * @param  mixed  $data
      * @param  integer $statusCode
      * @param  array  $headers
+     * @param int $options
      * @return JsonResponse
      */
-    protected function response($data, $statusCode = 200, array $headers = [])
+    protected function response($data, $statusCode = 200, array $headers = [], $options = 0)
     {
         if ($data instanceof Arrayable && !$data instanceof JsonSerializable) {
             $data = $data->toArray();
         }
 
-        return new JsonResponse($data, $statusCode, $headers);
+        return new JsonResponse($data, $statusCode, $headers, $options);
     }
 
     /**
