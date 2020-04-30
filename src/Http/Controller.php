@@ -9,5 +9,4 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 abstract class Controller extends LaravelController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
 }
