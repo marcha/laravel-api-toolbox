@@ -392,9 +392,7 @@ abstract class EloquentRepository
     }
 
     /**
-     * Get resources count by a where clause
-     * @param  string $column
-     * @param  mixed $value
+     * Get resources count by a options
      * @param  array  $options
      * @return Model|object
      */
