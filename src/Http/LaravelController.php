@@ -27,6 +27,11 @@ abstract class LaravelController extends Controller
     protected $defaults = [];
 
     /**
+     * @var array
+     */
+    protected $filters;
+
+    /**
      * Create a json response
      * @param  mixed  $data
      * @param  integer $statusCode
@@ -195,4 +200,48 @@ abstract class LaravelController extends Controller
             'filter_groups' => $filter_groups
         ];
     }
+
+    private function addToFilter($fieldName, $value, $operator,  $not = false)
+    {
+        if ($value) {
+            $this->filters['filters'][] = ['key' => $fieldName, 'operator' => $operator, 'value' => $value, 'not' => $not];
+        }
+    }
+
+    private function addCriteria(array $criteria){
+        $this->addToFilter($criteria['field'], $criteria['value'], $criteria['operator'], $criteria['not']);
+    }
+    /**
+     * Build filter by array 
+     * 
+     * @param array $criteria
+     *  [
+     *      [
+     *          'field'=>'some_field_1', 
+     *          'operator'=>'eq', 
+     *          'value'=>'something',
+     *          'not'=>false
+     *      ],
+     *      [
+     *          'field'=>'some_field_2', 
+     *          'operator'=>'ct', 
+     *          'value'=>'word',
+     *          'not'=>true
+     *      ]
+     *  ]
+     */
+
+    public function buildFilter(array $criteria)
+    {
+        $this->filters = [];
+        foreach($criteria as $c){
+            $this->addCriteria($c);
+        }
+        
+        if (count($this->filters) > 0) {
+            $filter_groups[0] = array_merge($this->filters, ['or' => false]);
+        }
+
+
+        return count($filter_groups) > 0 ? $filter_groups : null;
 }
