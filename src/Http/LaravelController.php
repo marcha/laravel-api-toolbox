@@ -201,7 +201,7 @@ abstract class LaravelController extends Controller
         ];
     }
 
-    private function addToFilter($fieldName, $value, $operator,  $not = false)
+    public function addToFilter($fieldName, $value, $operator,  $not = false)
     {
         if ($value) {
             $this->filters['filters'][] = ['key' => $fieldName, 'operator' => $operator, 'value' => $value, 'not' => $not];
