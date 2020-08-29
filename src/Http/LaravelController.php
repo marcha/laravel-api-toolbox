@@ -29,7 +29,12 @@ abstract class LaravelController extends Controller
     /**
      * @var array
      */
-    protected $filters;
+    protected $filters = [];
+
+    /**
+     * @var array
+     */
+    protected $filter_groups = [];
 
     /**
      * Create a json response
@@ -208,7 +213,8 @@ abstract class LaravelController extends Controller
         }
     }
 
-    private function addCriteria(array $criteria){
+    private function addCriteria(array $criteria)
+    {
         $this->addToFilter($criteria['field'], $criteria['value'], $criteria['operator'], $criteria['not']);
     }
     /**
@@ -234,14 +240,16 @@ abstract class LaravelController extends Controller
     public function buildFilter(array $criteria)
     {
         $this->filters = [];
-        foreach($criteria as $c){
+        $this->filter_groups = [];
+
+        foreach ($criteria as $c) {
             $this->addCriteria($c);
         }
-        
+
         if (count($this->filters) > 0) {
-            $filter_groups[0] = array_merge($this->filters, ['or' => false]);
+            $this->filter_groups[0] = array_merge($this->filters, ['or' => false]);
         }
 
-
-        return count($filter_groups) > 0 ? $filter_groups : null;
+        return count($this->filter_groups) > 0 ? $this->filter_groups : null;
+    }
 }
