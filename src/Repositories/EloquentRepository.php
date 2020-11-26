@@ -48,7 +48,7 @@ abstract class EloquentRepository
      */
     public function get(array $options = [])
     {
-        if ($options['limit']) {
+        if (key_exists('limit', $options) && $options['limit']) {
 
             return $this->getWithPagination($options);
         }
