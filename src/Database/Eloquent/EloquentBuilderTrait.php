@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: nikola.marcic
@@ -7,6 +8,7 @@
  */
 
 namespace Erpmonster\Database\Eloquent;
+
 use DB;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -59,7 +61,7 @@ trait EloquentBuilderTrait
         }
 
         if (isset($page)) {
-            if (! isset($limit)) {
+            if (!isset($limit)) {
                 throw new InvalidArgumentException('A limit is required when using page.');
             }
 
@@ -93,7 +95,7 @@ trait EloquentBuilderTrait
             });
         }
 
-        foreach(array_diff($joins, $previouslyJoined) as $join) {
+        foreach (array_diff($joins, $previouslyJoined) as $join) {
             $this->joinRelatedModelIfExists($queryBuilder, $join);
         }
 
@@ -109,7 +111,7 @@ trait EloquentBuilderTrait
     protected function applyFilter(Builder $queryBuilder, array $filter, $or = false, array &$joins)
     {
         // Destructure Shorthand Filtering Syntax if filter is Shorthand
-        if (! array_key_exists('key', $filter) && count($filter) >= 3) {
+        if (!array_key_exists('key', $filter) && count($filter) >= 3) {
             $filter = [
                 'key'      => ($filter[0] ?: null),
                 'operator' => ($filter[1] ?: null),
@@ -134,19 +136,25 @@ trait EloquentBuilderTrait
             $clauseOperator = null;
             $databaseField = null;
 
-            switch($operator) {
+            switch ($operator) {
                 case 'ct':
                 case 'sw':
                 case 'ew':
                     $valueString = [
-                        'ct' => '%'.$value.'%', // contains
-                        'ew' => '%'.$value, // ends with
-                        'sw' => $value.'%' // starts with
+                        'ct' => '%' . $value . '%', // contains
+                        'ew' => '%' . $value, // ends with
+                        'sw' => $value . '%' // starts with
                     ];
 
-                    $castToText = (($dbType === 'pgsql') ? 'TEXT' : 'CHAR');
-                    $databaseField = DB::raw(sprintf('CAST(%s.%s AS ' . $castToText . ')', $table, $key));
-                    $clauseOperator = ($not ? 'NOT':'') . (($dbType === 'pgsql') ? 'ILIKE' : 'LIKE');
+                    if ($dbType === 'firebird') {
+                        $castToText = 'VARCHAR(1024)';
+                        $databaseField = DB::raw(sprintf('%s.%s', $table, $key));
+                    } else {
+                        $castToText = (($dbType === 'pgsql') ? 'TEXT' : 'CHAR');
+                        $databaseField = DB::raw(sprintf('CAST(%s.%s AS ' . $castToText . ')', $table, $key));
+                    }
+
+                    $clauseOperator = ($not ? 'NOT' : '') . (($dbType === 'pgsql') ? 'ILIKE' : 'LIKE');
                     $value = $valueString[$operator];
                     break;
                 case 'eq':
@@ -189,7 +197,10 @@ trait EloquentBuilderTrait
             if (is_null($databaseField)) {
                 $databaseField = sprintf('%s.%s', $table, $key);
             }
-
+            if ($dbType = 'firebird') {
+                //$value = Str::upper($value);
+                $value = $this->convToConnectionCharset($queryBuilder, $value);
+            }
             $customFilterMethod = $this->hasCustomMethod('filter', $key);
             if ($customFilterMethod) {
                 call_user_func_array([$this, $customFilterMethod], [
@@ -227,7 +238,7 @@ trait EloquentBuilderTrait
     protected function applySorting(Builder $queryBuilder, array $sorting, array $previouslyJoined = [])
     {
         $joins = [];
-        foreach($sorting as $sortRule) {
+        foreach ($sorting as $sortRule) {
             if (is_array($sortRule)) {
                 $key = $sortRule['key'];
                 $direction = mb_strtolower($sortRule['direction']) === 'asc' ? 'ASC' : 'DESC';
@@ -246,7 +257,7 @@ trait EloquentBuilderTrait
             }
         }
 
-        foreach(array_diff($joins, $previouslyJoined) as $join) {
+        foreach (array_diff($joins, $previouslyJoined) as $join) {
             $this->joinRelatedModelIfExists($queryBuilder, $join);
         }
 
@@ -299,7 +310,7 @@ trait EloquentBuilderTrait
                 );
                 $queryBuilder->join(
                     $relation->getRelated()->getTable(),
-                    $relation->getRelated()->getTable().'.'.$relation->getRelated()->getKeyName(),
+                    $relation->getRelated()->getTable() . '.' . $relation->getRelated()->getKeyName(),
                     '=',
                     $relation->getQualifiedRelatedKeyName(),
                     $type
@@ -319,6 +330,22 @@ trait EloquentBuilderTrait
         }
     }
 
+    /**
+     * Convert string according connection charset
+     * @param Builder $queryBuilder
+     * @param $value
+     */
+    protected function convToConnectionCharset(Builder $queryBuilder, $value)
+    {
 
+        $config = $queryBuilder->getConnection()->getConfig();
 
+        if (key_exists('charset', $config)) {
+            $charset =  $config['charset'];
+            if ($charset === 'WIN1250') {
+                $value = iconv('UTF-8', 'Windows-1250', $value);
+            }
+        };
+        return $value;
+    }
 }
