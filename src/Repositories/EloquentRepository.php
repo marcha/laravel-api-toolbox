@@ -13,7 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Erpmonster\Database\Eloquent\EloquentBuilderTrait;
+use Erpmonster\Utils\Architect\Utility;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use League\Fractal\TransformerAbstract;
+use League\Fractal\Manager as FractalManager;
+use League\Fractal\Resource\Collection as FractalCollection;
+use League\Fractal\Resource\Item as FractalItem;
 
 abstract class EloquentRepository
 {
@@ -449,5 +454,23 @@ abstract class EloquentRepository
     public function deleteSync($syncModel)
     {
         $this->deleteWhere('log_row_id', $syncModel->log_row_id);
+    }
+
+    /**
+     * @param Collection|Model $data
+     * @param TransformerAbstract $transformer 
+     */
+    public function transform($data, TransformerAbstract $transformer)
+    {
+        if (Utility::isCollection($data)) {
+            $resource = new FractalCollection($data, $transformer); // Create a resource collection transformer
+        } else {
+            $resource = new FractalItem($data, $transformer); // Create a resource collection transformer
+        }
+        $fractal = new FractalManager();
+
+        $transformedData = $fractal->createData($resource)->toArray(); // Transform data
+
+        return $transformedData;
     }
 }

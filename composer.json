@@ -3,10 +3,12 @@
   "description": "Repository, Service, Filters...",
   "require": {
     "php": ">=5.4.0",
-    "illuminate/support": "^5.5|^6.0|^7.0|^8.0"
+    "illuminate/support": "^5.5|^6.0|^7.0|^8.0",
+    "league/fractal": "^0.19.2"
   },
   "require-dev": {
-    "phpspec/phpspec": "~5.1"
+    "phpspec/phpspec": "~5.1",
+    "illuminate/database": "^5.5|^6.0|^7.0|^8.0"
   },
   "license": "MIT",
   "authors": [
