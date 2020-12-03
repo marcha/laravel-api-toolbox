@@ -48,36 +48,26 @@ abstract class EloquentRepository
      */
     public function get(array $options = [])
     {
+        $query = $this->createBaseBuilder($options);
+
         if (key_exists('limit', $options) && $options['limit']) {
 
-            return $this->getWithPagination($options);
-        }
+            $pagination = $query->paginate(intval($options['limit']));
 
-        $query = $this->createBaseBuilder($options);
+            $data = $pagination->items();
+
+            return ['data' => $data, 'pagination' => $pagination];
+        }
 
         return $query->get();
     }
 
-    /**
-     * Get resources with pagination
-     * @param  array $options
-     * @return Collection|mixed
-     */
-
-    public function getWithPagination(array $options = [])
-    {
-        $query = $this->createBaseBuilder($options);
-
-        $pagination = $query->paginate(intval($options['limit']));
-
-        return ['data' => $pagination->items(), 'pagination' => $pagination];
-    }
 
     /**
      * Get a resource by its primary key
      * @param  mixed $id
      * @param  array $options
-     * @return Collection
+     * @return Model|object
      */
     public function getById($id, array $options = [])
     {
