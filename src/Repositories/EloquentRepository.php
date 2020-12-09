@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Erpmonster\Database\Eloquent\EloquentBuilderTrait;
+use Erpmonster\Transformers\ResourceKeyDataSerializer;
 use Erpmonster\Utils\Architect\Utility;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Fractal\TransformerAbstract;
@@ -457,20 +458,50 @@ abstract class EloquentRepository
     }
 
     /**
+     * Transform resources with "data" key in results
+     * This is default fractal transforming
+     * 
      * @param Collection|Model $data
      * @param TransformerAbstract $transformer 
      */
     public function transform($data, TransformerAbstract $transformer)
     {
-        if (Utility::isCollection($data)) {
-            $resource = new FractalCollection($data, $transformer); // Create a resource collection transformer
-        } else {
-            $resource = new FractalItem($data, $transformer); // Create a resource collection transformer
-        }
+        $resource = $this->getResourceByType($data, $transformer);
+
         $fractal = new FractalManager();
 
         $transformedData = $fractal->createData($resource)->toArray(); // Transform data
 
         return $transformedData;
+    }
+
+    /**
+     * Transform resources with custom or without key resource key in results
+     * This function use custom ResourceKeyDataSerializer 
+     * 
+     * @param Collection|Model $data
+     * @param TransformerAbstract $transformer 
+     * @param bool $toArray default false
+     */
+    public function transformWithCustomKey($data, TransformerAbstract $transformer, $resourceKey = null)
+    {
+        $resource = $this->getResourceByType($data, $transformer, $resourceKey);
+
+        $fractal = new FractalManager();
+
+        $fractal->setSerializer(new ResourceKeyDataSerializer());
+
+        $transformedData = $fractal->createData($resource)->toArray();
+
+        return $transformedData;
+    }
+
+    private function getResourceByType($data, $transformer, $resourceKey = null)
+    {
+        if (Utility::isCollection($data)) {
+            return new FractalCollection($data, $transformer, $resourceKey); // Create a resource collection transformer
+        } else {
+            return new FractalItem($data, $transformer, $resourceKey); // Create a resource collection transformer
+        }
     }
 }
