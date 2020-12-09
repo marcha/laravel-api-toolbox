@@ -37,6 +37,11 @@ abstract class LaravelController extends Controller
     protected $filter_groups = [];
 
     /**
+     * @var CASE_UPPER|CASE_LOWER
+     */
+    protected $fieldNameCase;
+
+    /**
      * Create a json response
      * @param  mixed  $data
      * @param  integer $statusCode
@@ -103,7 +108,8 @@ abstract class LaravelController extends Controller
             if (!isset($sort['direction'])) {
                 $sort['direction'] = 'asc';
             }
-
+            $sort['key'] = $this->fieldNameCase === CASE_LOWER ? strtolower($sort['key']) : strtolower($sort['key']);
+            $sort['direction'] = $this->fieldNameCase === CASE_LOWER ? strtolower($sort['direction']) : strtolower($sort['direction']);
             return $sort;
         }, $sort);
     }
@@ -154,7 +160,7 @@ abstract class LaravelController extends Controller
                 if (!isset($filter['not'])) {
                     $filter['not'] = false;
                 }
-
+                $filter['key'] = $this->fieldNameCase === CASE_LOWER ? strtolower($filter['key']) : strtolower($filter['key']);
                 return $filter;
             }, $group['filters']);
 
@@ -169,13 +175,16 @@ abstract class LaravelController extends Controller
 
     /**
      * Parse GET parameters into resource options
+     * @param Request
+     * @param int CASE_LOWER|CASE_UPPER
      * @return array
      */
-    protected function parseResourceOptions($request = null)
+    protected function parseResourceOptions($request = null, $fieldNameCase = null)
     {
         if ($request === null) {
             $request = app('request');
         }
+        $this->fieldNameCase = $fieldNameCase ? $fieldNameCase : CASE_LOWER;
 
         $this->defaults = array_merge([
             'includes' => [],
