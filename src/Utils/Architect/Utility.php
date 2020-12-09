@@ -41,9 +41,9 @@ class Utility
                 if ($objectOrArray->relationLoaded($property) && !Utility::isPrimitive($value)) {
                     $objectOrArray->setRelation($property, $value);
 
-            // If attribute is not a relation we just set it on
-            // the model directly. If it is a primitive relation (a relation
-            // converted to IDs) we unset the relation and set it as an attribute
+                    // If attribute is not a relation we just set it on
+                    // the model directly. If it is a primitive relation (a relation
+                    // converted to IDs) we unset the relation and set it as an attribute
                 } else {
                     unset($objectOrArray[$property]);
                     $objectOrArray->setAttribute($property, $value);
@@ -74,5 +74,26 @@ class Utility
     public static function isCollection($input)
     {
         return is_array($input) || $input instanceof Collection;
+    }
+
+
+    /**
+     * Convert encoding for multidemensional arrays
+     *
+     * @param array|string $data
+     * @param string $in_charset
+     * @param string $out_charset
+     *
+     */
+    public static function convertEncoding(&$data, string $in_charset = 'UTF-8', string $out_charset = 'Windows-1250//TRANSLIT//IGNORE')
+    {
+        array_walk_recursive(
+            $data,
+            function (&$entry) use ($in_charset, $out_charset) {
+                if (is_string($entry)) {
+                    $entry = iconv($in_charset, $out_charset, $entry);
+                }
+            }
+        );
     }
 }
