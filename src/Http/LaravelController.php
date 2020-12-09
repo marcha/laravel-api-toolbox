@@ -108,12 +108,16 @@ abstract class LaravelController extends Controller
             if (!isset($sort['direction'])) {
                 $sort['direction'] = 'asc';
             }
-            $sort['key'] = $this->fieldNameCase === CASE_LOWER ? strtolower($sort['key']) : strtolower($sort['key']);
-            $sort['direction'] = $this->fieldNameCase === CASE_LOWER ? strtolower($sort['direction']) : strtolower($sort['direction']);
+            $this->setCase($sort['key']);
+            $this->setCase($sort['direction']);
             return $sort;
         }, $sort);
     }
 
+    private function setCase(&$value)
+    {
+        $value = $this->fieldNameCase === CASE_LOWER ? strtolower($value) : strtoupper($value);
+    }
     /**
      * Parse include strings into resource and modes
      * @param  array  $includes
@@ -160,7 +164,7 @@ abstract class LaravelController extends Controller
                 if (!isset($filter['not'])) {
                     $filter['not'] = false;
                 }
-                $filter['key'] = $this->fieldNameCase === CASE_LOWER ? strtolower($filter['key']) : strtolower($filter['key']);
+                $this->setCase($filter['key']);
                 return $filter;
             }, $group['filters']);
 
