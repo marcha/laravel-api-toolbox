@@ -7,7 +7,7 @@ trait Approvable
 {
 
     /**
-     * Determine if the user has verified their email address.
+     * Determine if the given resource is approved
      *
      * @return bool
      */
@@ -17,7 +17,7 @@ trait Approvable
     }
 
     /**
-     * Mark the given user's email as verified.
+     * Mark the given resource as approved.
      *
      * @return bool
      */
@@ -29,7 +29,7 @@ trait Approvable
     }
 
     /**
-     * Determine if the user has verified their email address.
+     * Determine if resource is rejected.
      *
      * @return bool
      */
@@ -39,7 +39,7 @@ trait Approvable
     }
 
     /**
-     * Mark the given user's email as verified.
+     * Mark the given resporce as rejected.
      *
      * @return bool
      */
