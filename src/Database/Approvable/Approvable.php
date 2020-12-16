@@ -25,6 +25,7 @@ trait Approvable
     {
         return $this->forceFill([
             'APPROVED_AT' => $this->freshTimestamp(),
+            'REJECTED_AT' => null,
         ])->save();
     }
 
