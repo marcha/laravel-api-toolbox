@@ -2,7 +2,6 @@
 
 namespace Erpmonster\System;
 
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -29,7 +28,6 @@ class LaravelRouteServiceProvider extends ServiceProvider
         $this->setRootControllerNamespace();
 
         $this->loadRoutes();
-
     }
 
     /**
@@ -39,7 +37,7 @@ class LaravelRouteServiceProvider extends ServiceProvider
      */
     protected function setRootControllerNamespace()
     {
-        if (! is_null($this->namespace)) {
+        if (!is_null($this->namespace)) {
             $this->app[UrlGenerator::class]->setRootControllerNamespace($this->namespace);
         }
     }
@@ -88,7 +86,8 @@ class LaravelRouteServiceProvider extends ServiceProvider
     public function __call($method, $parameters)
     {
         return call_user_func_array(
-            [$this->app->make(Router::class), $method], $parameters
+            [$this->app->make(Router::class), $method],
+            $parameters
         );
     }
 }
