@@ -1,5 +1,5 @@
 {
-  "name": "erpmonster/laravel-toolbox",
+  "name": "marcha/laravel-toolbox",
   "description": "Repository, Service, Filters...",
   "require": {
     "php": ">=5.4.0",
