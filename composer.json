@@ -1,5 +1,5 @@
 {
-  "name": "marcha/laravel-toolbox",
+  "name": "marcha/laravel-api-toolbox",
   "description": "Repository, Service, Filters...",
   "require": {
     "php": ">=5.4.0",
