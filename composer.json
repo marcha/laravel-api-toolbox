@@ -2,9 +2,8 @@
   "name": "marcha/laravel-api-toolbox",
   "description": "Repository, Service, Filters...",
   "require": {
-    "php": ">=5.4.0",
-    "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
-    "league/fractal": "^0.19.2"
+    "php": ">=7.4.0",
+    "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0"
   },
   "require-dev": {
     "illuminate/database": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
