@@ -1,5 +1,5 @@
-# Erpmonster laravel toolbox - Laravel 5 API extensions
+# Erpmonster laravel toolbox - Laravel API extensions
 
 ## Install
 
-`php composer require marcha/erpmonster-laravel-toolbox`
+`php composer require marcha/laravel-api-toolbox`
