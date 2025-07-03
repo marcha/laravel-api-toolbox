@@ -2,4 +2,4 @@
 
 ## Install
 
-`php composer require marcha/laravel-api-toolbox`
+`php composer require marcha/laravel-api-toolbox:dev-main`
