@@ -204,11 +204,13 @@ abstract class EloquentRepository
    */
   public function create(array $data)
   {
-    $this->getModel()->fill($data);
+    $model = $this->getModel();
 
-    $this->getModel()->save();
+    $model->fill($data);
 
-    return $this->model;
+    $model->save();
+
+    return $model;
   }
 
   /**
