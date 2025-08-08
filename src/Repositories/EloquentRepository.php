@@ -334,30 +334,59 @@ abstract class EloquentRepository
 
   /**
    * Lookup for select remote field
-   * @param $keyField
-   * @param $displayField
-   * @param $selectedId
-   * @param $q
-   * @return mixed
+   *
+   * @param string          $keyField       // npr. 'id' ili 'code'
+   * @param string          $displayField   // npr. 'name' ili 'title'
+   * @param int|array|null  $selectedId     // može 15, [15,16], '15,16'
+   * @param string|null     $q              // query string
+   * @return array{selected:\Illuminate\Support\Collection,list:\Illuminate\Support\Collection}
    */
   public function lookup($keyField, $displayField, $selectedId, $q)
   {
+    // 1) Normalizuj selectedId u niz int-ova
+    if (is_string($selectedId)) {
+      $selectedId = array_filter(array_map('trim', explode(',', $selectedId)));
+    }
+    if (!is_array($selectedId)) {
+      $selectedId = $selectedId ? [$selectedId] : [];
+    }
+    $selectedIds = collect($selectedId)->map(fn($v) => (int) $v)->filter()->unique()->values()->all();
 
-    $data['selected'] = [];
+    // 2) SELECT sa aliasima tako da response bude { id, name }
+    $select = [
+      "{$keyField} as id",
+      "{$displayField} as name",
+    ];
 
-    $data['list'] = [];
-    if ($selectedId) {
-      $data['selected'] = $this->getModel()->select([$keyField, $displayField])->where($keyField, '=', $selectedId)->get();
+    // 3) Učitaj selected (ako ima)
+    $selected = collect();
+    if (!empty($selectedIds)) {
+      $selected = $this->getModel()
+        ->select($select)
+        ->whereIn($keyField, $selectedIds)
+        ->orderBy($displayField)
+        ->get();
     }
 
-    $data['list'] = $this->getModel()->select([$keyField, $displayField])
-      ->where($displayField, 'LIKE', '%' . $q . '%')
+    // 4) Učitaj list po pretrazi (ograniči 20)
+    $q = trim((string) $q);
+    $listQuery = $this->getModel()
+      ->select($select)
+      ->when($q !== '', fn($qb) => $qb->where($displayField, 'LIKE', '%' . $q . '%'))
       ->orderBy($displayField)
-      ->limit(20)
-      ->get();
+      ->limit(20);
 
-    return $data;
+    $list = $listQuery->get();
+
+    // 5) Ukloni duplikate ako je neki iz selected već u listi
+    $list = $list->reject(fn($row) => $selected->contains('id', $row->id))->values();
+
+    return [
+      'selected' => $selected,
+      'list'     => $list,
+    ];
   }
+
 
   /**
    * @param array $keys
